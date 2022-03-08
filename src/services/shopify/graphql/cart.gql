@@ -1,0 +1,210 @@
+query getCart($cartId: ID!) {
+  cart(id: $cartId) {
+    id
+    checkoutUrl
+    createdAt
+    updatedAt
+    estimatedCost {
+      subtotalAmount {
+        amount
+        currencyCode
+      }
+      totalAmount {
+        amount
+        currencyCode
+      }
+      totalTaxAmount {
+        amount
+        currencyCode
+      }
+    }
+    lines(first: 10) {
+      edges {
+        node {
+          id
+          quantity
+          merchandise {
+            ... on ProductVariant {
+              product {
+                id
+                title
+                handle
+                priceRange {
+                  minVariantPrice {
+                    currencyCode
+                    amount
+                  }
+                }
+                images(first: 1) {
+                  edges {
+                    node {
+                      id
+                      altText
+                      # transformedSrc(maxWidth: 768, maxHeight: 1024, crop: CENTER, preferredContentType: JPG)
+                      url(transform: { maxWidth: 768, maxHeight: 1024, crop: CENTER, preferredContentType: JPG })
+                    }
+                  }
+                }
+              }
+            }
+          }
+          attributes {
+            key
+            value
+          }
+        }
+      }
+    }
+    attributes {
+      key
+      value
+    }
+    estimatedCost {
+      totalAmount {
+        amount
+        currencyCode
+      }
+      subtotalAmount {
+        amount
+        currencyCode
+      }
+      totalTaxAmount {
+        amount
+        currencyCode
+      }
+      totalDutyAmount {
+        amount
+        currencyCode
+      }
+    }
+    buyerIdentity {
+      email
+      phone
+      customer {
+        id
+      }
+      countryCode
+    }
+  }
+}
+
+query getCartItemCount($cartId: ID!) {
+  cart(id: $cartId) {
+    id
+    createdAt
+    updatedAt
+    lines(first: 100) {
+      edges {
+        node {
+          quantity
+        }
+      }
+    }
+  }
+}
+
+mutation createCart($input: CartInput!) {
+  cartCreate(input: $input) {
+    cart {
+      id
+      checkoutUrl
+      createdAt
+      updatedAt
+      lines(first: 100) {
+        edges {
+          node {
+            id
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                product {
+                  id
+                  title
+                  handle
+                  priceRange {
+                    minVariantPrice {
+                      currencyCode
+                      amount
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      attributes {
+        key
+        value
+      }
+      estimatedCost {
+        totalAmount {
+          amount
+          currencyCode
+        }
+        subtotalAmount {
+          amount
+          currencyCode
+        }
+        totalTaxAmount {
+          amount
+          currencyCode
+        }
+        totalDutyAmount {
+          amount
+          currencyCode
+        }
+      }
+    }
+  }
+}
+
+mutation addCartItem($cartId: ID!, $lines: [CartLineInput!]!) {
+  cartLinesAdd(cartId: $cartId, lines: $lines) {
+    cart {
+      id
+      checkoutUrl
+      createdAt
+      updatedAt
+      lines(first: 100) {
+        edges {
+          node {
+            id
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                product {
+                  id
+                  title
+                  handle
+                  priceRange {
+                    minVariantPrice {
+                      currencyCode
+                      amount
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation updateCartItem($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+  cartLinesUpdate(cartId: $cartId, lines: $lines) {
+    cart {
+      id
+    }
+  }
+}
+
+mutation removeCartItem($cartId: ID!, $lineIds: [ID!]!) {
+  cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+    cart {
+      id
+    }
+  }
+}
